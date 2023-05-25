@@ -1,23 +1,39 @@
 #include "shell.h"
 
 /**
- * alpha_beta - Executes a program passed as an argument.
- * @gamma_delta: The program to execute.
+ * parse_line - Parses a line into an array of tokens.
+ * @line: The input line to be parsed.
  *
- * Description: This function is responsible for executing a program
- * passed as an argument. It uses the execve() system call to execute
- * the program. If the execution fails, it prints an error message.
+ * Return: An array of strings (tokens) extracted from the line.
+ *
+ * Description: This function takes a line of input and tokenizes it
+ * into an array of strings. It uses strtok() to split the line based
+ * on delimiters (spaces, tabs, carriage returns, newlines, and bells).
+ * The tokens are stored in dynamically allocated memory, and the array
+ * is terminated with a NULL pointer.
  */
-void alpha_beta(char *gamma_delta)
+char **parse_line(char *line)
 {
-	char *epsilon_zeta[2] = {NULL, NULL};
+	int position = 0;
+	char **tokens = malloc(MAX_ARG_SIZE * sizeof(char *));
+	char *token;
 
-	epsilon_zeta[0] = gamma_delta;
-
-	if (execve(gamma_delta, epsilon_zeta, NULL) == -1)
+	token = strtok(line, " \t\r\n\a");
+	while (token != NULL)
 	{
-		printf("%s: No such file or directory\n", gamma_delta);
+		tokens[position] = token;
+		position++;
+
+		if (position >= MAX_ARG_SIZE)
+		{
+			fprintf(stderr, "shell: too many arguments\n");
+			exit(EXIT_FAILURE);
+		}
+
+		token = strtok(NULL, " \t\r\n\a");
 	}
+	tokens[position] = NULL;
+	return (tokens);
 }
 
 /**
@@ -30,29 +46,34 @@ void alpha_beta(char *gamma_delta)
  */
 void eta_theta(void)
 {
-	char iota_kappa[MAX_LINE_SIZE];
+	char line[MAX_LINE_SIZE];
+	char **args;
 
 	while (1)
 	{
 		printf(RAND_PROMPT);
 
-		if (fgets(iota_kappa, sizeof(iota_kappa), stdin) == NULL)
+		if (fgets(line, sizeof(line), stdin) == NULL)
 		{
 			printf("\n");
 			exit(EXIT_SUCCESS);
 		}
 
-		iota_kappa[strcspn(iota_kappa, "\n")] = '\0';
+		line[strcspn(line, "\n")] = '\0';
+
+		args = parse_line(line);
 
 		if (fork() == 0)
 		{
-			alpha_beta(iota_kappa);
+			alpha_beta(args);
 			exit(EXIT_SUCCESS);
 		}
 		else
 		{
 			wait(NULL);
 		}
+
+		free(args);
 	}
 }
 

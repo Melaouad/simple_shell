@@ -7,6 +7,7 @@
 #include <unistd.h>
 
 #define MAX_LINE_SIZE 1024
+#define MAX_ARG_SIZE 64
 #define RAND_PROMPT "#cisfun$ "
 
 void alpha_beta(char* gamma_delta);
