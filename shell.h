@@ -12,5 +12,5 @@
 
 void execute_command(char **parsed_args);
 char **parse_line(char *line);
-
+extern char **environ;
 #endif

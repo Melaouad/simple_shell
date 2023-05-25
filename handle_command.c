@@ -6,9 +6,10 @@
  * Description: This function takes an array of strings representing a command
  * and its arguments. It executes the command using execvp().
  */
+
 void execute_command(char **parsed_args)
 {
-	if (execvp(parsed_args[0], parsed_args) == -1)
+	if (execve(parsed_args[0], parsed_args, environ) == -1)
 	{
 		perror(parsed_args[0]);
 		exit(EXIT_FAILURE);
