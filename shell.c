@@ -1,4 +1,6 @@
 #include "shell.h"
+#include <sys/types.h>
+#include <sys/wait.h>
 
 /**
  * interactive_mode - Implements the interactive mode of the shell.
