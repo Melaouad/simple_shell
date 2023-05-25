@@ -10,7 +10,7 @@
 #define MAX_ARG_SIZE 64
 #define RAND_PROMPT "#cisfun$ "
 
-void alpha_beta(char *gamma_delta);
-void eta_theta(void);
+void execute_command(char **parsed_args);
+char **parse_line(char *line);
 
 #endif

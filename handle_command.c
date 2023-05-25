@@ -1,17 +1,16 @@
 #include "shell.h"
 
 /**
- * alpha_beta - Executes a program passed as an argument.
- * @gamma_delta: An array of strings containing the program and its arguments.
- *
- * Description: This function is responsible for executing a program
- * passed as an argument. It uses the execvp() system call to execute
- * the program. If the execution fails, it prints an error message.
+ * execute_command - Executes a command with its arguments.
+ * @parsed_args: An array of strings representing the command.
+ * Description: This function takes an array of strings representing a command
+ * and its arguments. It executes the command using execvp().
  */
-void alpha_beta(char **gamma_delta)
+void execute_command(char **parsed_args)
 {
-	if (execvp(gamma_delta[0], gamma_delta) == -1)
+	if (execvp(parsed_args[0], parsed_args) == -1)
 	{
-		printf("%s: No such file or directory\n", gamma_delta[0]);
+		perror(parsed_args[0]);
+		exit(EXIT_FAILURE);
 	}
 }

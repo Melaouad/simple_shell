@@ -1,50 +1,10 @@
 #include "shell.h"
 
 /**
- * parse_line - Parses a line into an array of tokens.
- * @line: The input line to be parsed.
- *
- * Return: An array of strings (tokens) extracted from the line.
- *
- * Description: This function takes a line of input and tokenizes it
- * into an array of strings. It uses strtok() to split the line based
- * on delimiters (spaces, tabs, carriage returns, newlines, and bells).
- * The tokens are stored in dynamically allocated memory, and the array
- * is terminated with a NULL pointer.
+ * interactive_mode - Implements the interactive mode of the shell.
+ * Description: This function implements the interactive mode of the shell.
  */
-char **parse_line(char *line)
-{
-	int position = 0;
-	char **tokens = malloc(MAX_ARG_SIZE * sizeof(char *));
-	char *token;
-
-	token = strtok(line, " \t\r\n\a");
-	while (token != NULL)
-	{
-		tokens[position] = token;
-		position++;
-
-		if (position >= MAX_ARG_SIZE)
-		{
-			fprintf(stderr, "shell: too many arguments\n");
-			exit(EXIT_FAILURE);
-		}
-
-		token = strtok(NULL, " \t\r\n\a");
-	}
-	tokens[position] = NULL;
-	return (tokens);
-}
-
-/**
- * eta_theta - Implements the main loop of the shell.
- *
- * Description: This function implements the main loop of the shell.
- * It continuously prompts the user for input, reads the input, and
- * executes the corresponding program using the alpha_beta() function.
- * The loop continues until the user decides to exit.
- */
-void eta_theta(void)
+void interactive_mode(void)
 {
 	char line[MAX_LINE_SIZE];
 	char **args;
@@ -60,13 +20,11 @@ void eta_theta(void)
 		}
 
 		line[strcspn(line, "\n")] = '\0';
-
 		args = parse_line(line);
 
 		if (fork() == 0)
 		{
-			alpha_beta(args);
-			exit(EXIT_SUCCESS);
+			execute_command(args);
 		}
 		else
 		{
@@ -78,16 +36,48 @@ void eta_theta(void)
 }
 
 /**
- * main - Entry point of the shell program.
- *
- * Description: This is the entry point of the shell program. It calls
- * the eta_theta() function to start the main loop of the shell. The
- * program will keep running until the user decides to exit.
- *
- * Return: Always returns 0.
+ * noninteractive_mode - Implements the non-interactive mode of the shell.
+ * @argv: Command line arguments.
+ * Description: This function implements the non-interactive mode of the shell.
  */
-int main(void)
+void noninteractive_mode(char **argv)
 {
-	eta_theta();
+	char **args = parse_line(argv[1]);
+
+	if (fork() == 0)
+	{
+		execute_command(args);
+	}
+	else
+	{
+		wait(NULL);
+	}
+
+	free(args);
+}
+
+/**
+ * main - Entry point of the shell program.
+ * @argc: Number of command line arguments.
+ * @argv: Array of command line arguments.
+ * Description: This is the entry point of the shell program
+ * Return: 0 on success, 1 on error.
+ */
+int main(int argc, char **argv)
+{
+	if (argc == 1)
+	{
+		interactive_mode();
+	}
+	else if (argc == 2)
+	{
+		noninteractive_mode(argv);
+	}
+	else
+	{
+		fprintf(stderr, "%s: too many arguments\n", argv[0]);
+		return (1);
+	}
+
 	return (0);
 }
